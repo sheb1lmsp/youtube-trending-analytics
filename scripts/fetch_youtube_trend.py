@@ -11,8 +11,11 @@ load_dotenv()
 API_KEY = os.getenv('YOUTUBE_API_KEY')
 YOUTUBE = build("youtube", "v3", developerKey=API_KEY)
 
+# Encode the filepath that is suitable with the github actions (Not needed with local run)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # Load category mapping
-with open("../categories.json", "r") as f:
+with open(os.path.join(BASE_DIR, "categories.json"), "r") as f:
     cat_map = json.load(f)
 
 def get_trending_videos(region):
