@@ -32,9 +32,11 @@ jobs:
         git pull --rebase origin main || echo "Nothing to pull"
 
     - name: Run script
+      working-directory: ./scripts
       env:
         YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-      run: python scripts/main.py
+      run: python main.py
+
 
     - name: Commit new data
       run: |
