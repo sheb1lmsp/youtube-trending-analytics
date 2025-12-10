@@ -1,9 +1,6 @@
-google-api-python-client
-pandas
-python-dotenv
 streamlit
-matplotlib
+pandas
+numpy
 plotly
 wordcloud
-numpy
-json
+python-dateutil
