@@ -12,6 +12,9 @@ CHECK_TIME = time(6,5)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 COUNTRY_FILE = os.path.join(BASE_DIR, "country_names.json")
 
+print(DATA_DIR)
+print(COUNTRY_FILE)
+
 with open(COUNTRY_FILE, 'r') as f:
     country_names = json.load(f)
 
