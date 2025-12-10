@@ -6,3 +6,4 @@ matplotlib
 plotly
 wordcloud
 numpy
+json
