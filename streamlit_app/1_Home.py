@@ -23,7 +23,10 @@ st.set_page_config(
 load_css()
 apply_plotly_theme()
 
-with open('country_names.json', 'r') as f:
+BASE_DIR = os.path.abspath(".")
+COUNTRY_PATH = os.path.join(BASE_DIR, 'country_names.json')
+
+with open(COUNTRY_PATH, 'r') as f:
     country_names = json.load(f)
 
 # ----------------------------------------------------------------------------
