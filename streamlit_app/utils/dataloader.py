@@ -5,7 +5,7 @@ from pathlib import Path
 import os
 import json
 
-BASE_DIR = os.abspath('.')
+BASE_DIR = os.path.abspath('.')
 DATA_DIR = Path(os.path.join(BASE_DIR, 'data'))
 all_data_path_list = list(DATA_DIR.glob('*/*/*.csv'))
 
