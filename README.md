@@ -51,7 +51,7 @@ Data is automatically fetched daily, cleaned, versioned, and stored—ideal for 
 
 The repository includes a cron-based GitHub Action that runs **every day at 12:30 PM UTC**, executes the fetch script, saves new data to the `data/` folder, and auto-commits it.
 
-### 🔧 GitHub Actions Workflow (`fetch_trending.yml`)
+### 🔧 GitHub Actions Workflow (`daily.yml`)
 
 ```yaml
 name: Fetch YouTube Trending (Daily)
