@@ -28,7 +28,7 @@ with st.spinner("Loading today's trending videos..."):
     else:
         latest_df = st.session_state['latest_df']
 
-country_names = latest_df['country_name'].unique().to_list()
+country_names = latest_df['country_name'].unique().tolist()
 
 # ----------------------------------------------------------------------------
 # PAGE HEADER
