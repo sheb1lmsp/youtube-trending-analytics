@@ -2,6 +2,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+import os
 from datetime import datetime
 import json
 from wordcloud import WordCloud
@@ -22,7 +23,10 @@ st.set_page_config(
 load_css()
 apply_plotly_theme()
 
-with open('country_names.json', 'r') as f:
+BASE_DIR = os.getcwd()
+COUNTRY_FILE = os.path.join(BASE_DIR, 'country_names.json')
+
+with open(COUNTRY_FILE, 'r') as f:
     country_names = json.load(f)
 
 # ----------------------------------------------------------------------------
