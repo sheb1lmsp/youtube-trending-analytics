@@ -45,7 +45,7 @@ st.markdown("""
 # ----------------------------------------------------------------------------
 country = st.selectbox(
     "Select Country",
-    options=country_names.values(),
+    options=country_names,
     index=33
 )
 
