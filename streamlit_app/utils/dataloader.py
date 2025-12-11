@@ -7,7 +7,6 @@ import json
 
 BASE_DIR = os.path.abspath('.')
 DATA_DIR = Path(os.path.join(BASE_DIR, 'data'))
-all_data_path_list = list(DATA_DIR.glob('*/*/*.csv'))
 
 COUNTRY_FILE = os.path.join(BASE_DIR, "streamlit_app","country_names.json")
 
@@ -23,7 +22,7 @@ def get_country_name(alpha_2):
     except:
         return None
 
-@st.cache_data()
+@st.cache_data(ttl=3600)
 def get_latest_data():
     today = datetime.now()
     if today.time() > CHECK_TIME:
@@ -33,6 +32,7 @@ def get_latest_data():
         pattern = f"{yesterday.strftime('%Y-%m-%d')}"
 
     df = pd.DataFrame()
+    all_data_path_list = list(DATA_DIR.glob('*/*/*.csv'))
     for data_path in all_data_path_list:
         if pattern in str(data_path):
             current_df = pd.read_csv(data_path)
