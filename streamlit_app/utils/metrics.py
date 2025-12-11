@@ -8,6 +8,7 @@ def get_daily_metrics(df):
     most_commented_video = df.nlargest(1, 'comments')
     most_engaged_video = df.nlargest(1, 'engagement_score')
     longest_trending_video = df.nlargest(1, 'duration')
+    most_popular_creator = df['channel_title'].value_counts().index[0]
 
     result = {
         'total_videos' : len(df),
@@ -36,8 +37,9 @@ def get_daily_metrics(df):
         'longest_trending_video_title' : longest_trending_video['title'].item(),
         'longest_trending_video_channel' : longest_trending_video['channel_title'].item(),
         'longest_trending_video_duration' : int(longest_trending_video['duration'].item()),
-        'most_popular_creator_channel' : df['channel_title'].value_counts().index[0],
-        'most_popular_creator_video_count' : int(df['channel_title'].value_counts()[0]),
+        'most_popular_creator_channel_id' : df[df['channel_title'] == most_popular_creator]['channel_id'].unique().item(),
+        'most_popular_creator_channel' : most_popular_creator,
+        'most_popular_creator_video_count' : len(df[df['channel_title'] == most_popular_creator]),
     }
 
     return result

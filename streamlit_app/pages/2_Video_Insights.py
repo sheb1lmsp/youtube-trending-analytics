@@ -24,7 +24,7 @@ apply_plotly_theme()
 with st.spinner("Loading today's trending videos..."):
     latest_df = dataloader.get_latest_data()
     
-country_names = latest_df['country_name'].unique().tolist()
+country_names = sorted(latest_df["country_name"].unique())
 
 # ----------------------------------------------------------------------------
 # PAGE HEADER
@@ -42,7 +42,7 @@ st.markdown("""
 country = st.selectbox(
     "Select Country",
     options=country_names,
-    index=33
+    index=country_names.index('India')
 )
 
 filtered_df = latest_df[latest_df['country_name'] == country]
@@ -52,11 +52,11 @@ filtered_df = latest_df[latest_df['country_name'] == country]
 # ----------------------------------------------------------------------------
 st.markdown('<div class="section-header"><h3>🎥 Select a Video</h3></div>', unsafe_allow_html=True)
 
-video_titles = filtered_df["title"].fillna("Untitled Video").tolist()
+video_titles = sorted(filtered_df["title"].fillna("Untitled Video"))
 selected_title = st.selectbox("Choose a video", video_titles, index=0)
 
 video = filtered_df[filtered_df["title"] == selected_title].iloc[0]
-trending_countries = ", ".join(latest_df[latest_df["title"] == selected_title]["country_name"].tolist())
+trending_countries = ", ".join(latest_df[latest_df["title"] == selected_title]["country_name"].sort_values().tolist())
 
 # ----------------------------------------------------------------------------
 # VIDEO OVERVIEW SECTION

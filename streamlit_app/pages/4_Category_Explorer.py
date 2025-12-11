@@ -44,7 +44,7 @@ all_categories = sorted(latest_df["category_name"].dropna().unique())
 selected_category = st.selectbox(
     "Choose a category to analyze",
     all_categories,
-    index=0
+    index=all_categories.index("Entertainment")
 )
 
 cat_df = latest_df[latest_df["category_name"] == selected_category]
@@ -58,15 +58,16 @@ st.markdown('<div class="section-header"><h3>📊 Category Summary</h3></div>', 
 cols = st.columns(4)
 
 summary_map = [
-    ("Total Videos", f"{len(unique_df):,}"),
-    ("Total Views", f"{unique_df['views'].sum():,}"),
-    ("Avg Engagement", f"{unique_df['engagement_score'].mean():.2f}"),
-    ("Avg Duration (s)", f"{unique_df['duration'].mean():.0f}"),
+    ("🎬", "Total Videos", f"{len(unique_df):,}"),
+    ("👁️", "Total Views", f"{unique_df['views'].sum():,}"),
+    ("🔥", "Average Engagement", f"{100 * unique_df['engagement_score'].mean():.2f}%"),
+    ("⏱️", "Average Duration", f"{unique_df['duration'].mean():.0f}"),
 ]
 
-for col, (label, value) in zip(cols, summary_map):
+for col, (icon, label, value) in zip(cols, summary_map):
     col.markdown(f"""
         <div class="metric-container">
+            <div class="metric-icon">{icon}</div>
             <div class="metric-label">{label}</div>
             <div class="metric-value" style="margin-top:0.3rem;">{value}</div>
         </div>
@@ -97,7 +98,10 @@ top_vids = unique_df.sort_values(metric_col, ascending=False)[
     ["title", "channel_title", "views", "likes", "comments", "engagement_score", "video_id"]
 ].head(10)
 
-st.dataframe(top_vids, use_container_width=True, height=400)
+top_vids["Video URL"] = top_vids['video_id'].apply(lambda x : f"https://www.youtube.com/watch?v={x}")
+top_vids.columns = ['Title', 'Channel', 'Views', 'Likes', 'Comments', 'Engagement Score', 'Video ID', 'Video URL']
+
+st.dataframe(top_vids.drop('Video ID', axis=1).set_index(pd.Series(range(1,11))), use_container_width=True, height=400)
 
 # ----------------------------------------------------------------------------
 # CATEGORY PERFORMANCE ACROSS COUNTRIES
@@ -111,7 +115,8 @@ with col1:
     fig = px.bar(
         cat_df.groupby("country_name")["views"].mean().reset_index(),
         x="country_name",
-        y="views"
+        y="views",
+        labels={"country_name" : "Country", "views" : "Views"}
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -120,7 +125,8 @@ with col2:
     fig = px.bar(
         cat_df.groupby("country_name")["engagement_score"].mean().reset_index(),
         x="country_name",
-        y="engagement_score"
+        y="engagement_score",
+        labels={"country_name" : "Country", "engagement_score" : "Engagement Score"}
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -134,11 +140,13 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("### Views Distribution")
     fig = px.histogram(unique_df, x="views", nbins=30)
+    fig.update_layout(xaxis_title = "Views", yaxis_title = "Count")
     st.plotly_chart(fig, use_container_width=True)
 
 with col2:
     st.markdown("### Duration Distribution")
     fig = px.histogram(unique_df, x="duration", nbins=30)
+    fig.update_layout(xaxis_title = "Duration", yaxis_title = "Count")
     st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------------------------------------------------------
@@ -159,11 +167,12 @@ creator_stats = (
 top_creators = creator_stats.sort_values("video_count", ascending=False).head(10)
 
 fig = px.bar(
-    top_creators,
+    top_creators.sort_values("video_count", ascending=True),
     y="channel_title",
     x="video_count",
     orientation="h",
     title="Most Active Creators in This Category",
+    labels={"video_count" : "Number of Videos", "channel_title" : "Channel"}
 )
 st.plotly_chart(fig, use_container_width=True)
 

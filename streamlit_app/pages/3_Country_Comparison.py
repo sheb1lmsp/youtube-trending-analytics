@@ -23,7 +23,9 @@ apply_plotly_theme()
 # ----------------------------------------------------------------------------
 with st.spinner("Loading today's trending videos..."):
     latest_df = dataloader.get_latest_data()
-    
+
+country_names = sorted(latest_df["country_name"].unique())
+
 # ----------------------------------------------------------------------------
 # PAGE HEADER
 # ----------------------------------------------------------------------------
@@ -37,8 +39,6 @@ st.markdown("""
 # ----------------------------------------------------------------------------
 # COUNTRY SELECTION
 # ----------------------------------------------------------------------------
-all_countries = sorted(latest_df["country_name"].unique())
-
 st.markdown('<div class="section-header"><h3>🔎 Select Countries</h3></div>', unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
@@ -46,8 +46,8 @@ col1, col2 = st.columns(2)
 with col1:
     countries = st.multiselect(
         "Choose one or more countries to compare",
-        all_countries,
-        default=all_countries[:3]
+        country_names,
+        default=['India', 'United States', 'Australia']
     )
 
 with col2:
@@ -56,7 +56,15 @@ with col2:
         [
             "views", "likes", "comments",
             "engagement_score", "duration", "tag_count"
-        ]
+        ],
+        format_func = lambda x : {
+            "views" : "Total Views",
+            "likes" : "Total Likes",
+            "comments" : "Total Comments",
+            "engagement_score" : "Average Engagement Score",
+            "duration" : "Average Duration",
+            "tag_count" : "Total Tags"
+        }[x]
     )
 
 if not countries:
@@ -72,15 +80,23 @@ st.markdown('<div class="section-header"><h3>📊 Summary Metrics by Country</h3
 
 agg = filtered.groupby("country_name").agg(
     total_videos=("video_id", "count"),
-    total_views=("views", "sum"),
-    total_likes=("likes", "sum"),
-    total_comments=("comments", "sum"),
-    avg_engagement=("engagement_score", "mean"),
-    avg_duration=("duration", "mean"),
+    views=("views", "sum"),
+    likes=("likes", "sum"),
+    comments=("comments", "sum"),
+    engagement_score=("engagement_score", "mean"),
+    duration=("duration", "mean"),
+    tag_count=("tag_count", "sum"),
 ).reset_index()
 
+agg = agg.sort_values(metric_to_compare, ascending=False)
+agg.columns = ['Country', 'Total Videos', 'Total Views', 'Total Likes', 'Total Comments', 'Average Engagement', 'Average Duration', 'Total Tags']
+
 # Show the table
-st.dataframe(agg, use_container_width=True, height=350)
+st.dataframe(
+    agg.set_index(pd.Series(range(1, len(countries) + 1))), 
+    use_container_width=True, 
+    height=350
+)
 
 # ----------------------------------------------------------------------------
 # COUNTRY COMPARISON VISUALIZATIONS
@@ -96,6 +112,7 @@ with col1:
         filtered.groupby("country_name")[metric_to_compare].mean().reset_index(),
         x="country_name",
         y=metric_to_compare,
+        labels={"country_name" : "Country", metric_to_compare : metric_to_compare.title()},
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -106,6 +123,7 @@ with col2:
         filtered.groupby("country_name")[metric_to_compare].sum().reset_index(),
         x="country_name",
         y=metric_to_compare,
+        labels={"country_name" : "Country", metric_to_compare : metric_to_compare.title()},
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -118,8 +136,10 @@ fig = px.histogram(
     filtered,
     x="category_name",
     color="country_name",
-    barmode="group"
+    barmode="group",
 )
+
+fig.update_layout(xaxis_title="Category", yaxis_title="Count")
 st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------------------------------------------------------
@@ -139,7 +159,7 @@ for col, country in zip(cols, countries):
     with col:
         st.markdown(f"""
         <div class="highlight-box" style="padding:1.2rem; margin-bottom:1rem;">
-            <div class="highlight-title">🇨🇴 {country}</div>
+            <div class="highlight-title"><strong>{country}</strong></div>
             <h3 style="font-size:1rem;">{top_vid['title']}</h3>
             <p><strong>Channel:</strong> {top_vid['channel_title']}</p>
             <p style="margin-top:0.5rem;"><strong>Views:</strong> {top_vid['views']:,}</p>
@@ -158,7 +178,8 @@ fig = px.box(
     filtered,
     x="category_name",
     y="views",
-    color="country_name"
+    color="country_name",
+    labels={"category_name" : "Category", "views" : "Views"}
 )
 
 st.plotly_chart(fig, use_container_width=True)

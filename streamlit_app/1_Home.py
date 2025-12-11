@@ -23,12 +23,6 @@ st.set_page_config(
 load_css()
 apply_plotly_theme()
 
-BASE_DIR = os.path.abspath(".")
-COUNTRY_PATH = os.path.join(BASE_DIR, 'streamlit_app', 'country_names.json')
-
-with open(COUNTRY_PATH, 'r') as f:
-    country_names = json.load(f)
-
 # ----------------------------------------------------------------------------
 # HEADER
 # ----------------------------------------------------------------------------
@@ -45,13 +39,15 @@ st.markdown("""
 with st.spinner("🌍 Fetching today's trending videos..."):
     latest_df = dataloader.get_latest_data()
 
+country_names = sorted(latest_df["country_name"].unique())
+
 # ----------------------------------------------------------------------------
 # COUNTRY SELECTION
 # ----------------------------------------------------------------------------
 country = st.selectbox(
     "Select Country",
-    options=country_names.values(),
-    index=33
+    options=country_names,
+    index=country_names.index('India')
 )
 
 filtered_df = latest_df[latest_df['country_name'] == country]
@@ -176,6 +172,9 @@ with main_tabs[0]:
                 <div class="highlight-title">⭐ Top Creator by Trending Count</div>
                 <h3>{mv['most_popular_creator_channel']}</h3>
                 <h2>🎬 {mv['most_popular_creator_video_count']:,} videos</h2>
+                <a href="https://www.youtube.com/channel/{mv['most_popular_creator_channel_id']}" target="_blank">
+                    <button class="watch-button">📺 View Channel</button>
+                </a>
             </div>
         """, unsafe_allow_html=True)
 
@@ -251,45 +250,24 @@ with main_tabs[2]:
 
     st.markdown('<div class="section-header"><h3>🎬 Trending Videos & Channels</h3></div>', unsafe_allow_html=True)
 
-    cols = st.columns(2)
+    st.markdown("### Top Trending Videos")
+    top_views, top_likes, top_comments, top_engagement = top_videos.get_top_videos(filtered_df)
 
-    with cols[0]:
-        st.markdown("### Top Trending Videos")
-        top_views, top_likes, top_comments, top_engagement = top_videos.get_top_videos(filtered_df)
+    metric = st.radio(
+        "",
+        ["Top Views", "Top Likes", "Top Comments", "Top Engagement"],
+        horizontal=True,
+        label_visibility="collapsed"
+    )
 
-        metric = st.radio(
-            "",
-            ["Top Views", "Top Likes", "Top Comments", "Top Engagement"],
-            horizontal=True,
-            label_visibility="collapsed"
-        )
+    metric_map = {
+        "Top Views": top_views,
+        "Top Likes": top_likes,
+        "Top Comments": top_comments,
+        "Top Engagement": top_engagement
+    }
 
-        metric_map = {
-            "Top Views": top_views,
-            "Top Likes": top_likes,
-            "Top Comments": top_comments,
-            "Top Engagement": top_engagement
-        }
-
-        st.dataframe(metric_map[metric], use_container_width=True, height=420)
-
-    with cols[1]:
-        st.markdown("### Leading Channels by Trending Presence")
-
-        channel_stats = filtered_df.groupby("channel_title").agg({
-            "video_id": "count",
-            "views": "sum",
-            "engagement_score": "mean"
-        }).rename(columns={"video_id": "video_count"}).reset_index()
-
-        top_channels = channel_stats.sort_values("video_count", ascending=False).head(10)
-
-        fig = px.bar(
-            top_channels, y="channel_title", x="video_count",
-            orientation="h",
-            title="Top Channels by Number of Trending Videos"
-        )
-        st.plotly_chart(fig, use_container_width=True)
+    st.dataframe(metric_map[metric], use_container_width=True, height=420)
 
 # =============================================================================
 # TAB 4 — VIEWER BEHAVIOR ANALYSIS
