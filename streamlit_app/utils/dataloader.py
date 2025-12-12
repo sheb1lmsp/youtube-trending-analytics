@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta, time
+from zoneinfo import ZoneInfo
 from pathlib import Path
 import os
 import json
@@ -10,7 +11,7 @@ DATA_DIR = Path(os.path.join(BASE_DIR, 'data'))
 
 COUNTRY_FILE = os.path.join(BASE_DIR, "streamlit_app","country_names.json")
 
-CHECK_TIME = time(6,5)
+CHECK_TIME = time(6,10)
 
 with open(COUNTRY_FILE, 'r') as f:
     country_names = json.load(f)
@@ -24,7 +25,7 @@ def get_country_name(alpha_2):
 
 @st.cache_data(ttl=3600)
 def get_latest_data():
-    today = datetime.now()
+    today = datetime.now(ZoneInfo("Asia/Kolkata"))
     if today.time() > CHECK_TIME:
         pattern = f"{today.strftime('%Y-%m-%d')}"
     else:

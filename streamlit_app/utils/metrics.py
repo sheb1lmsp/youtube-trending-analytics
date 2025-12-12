@@ -37,7 +37,7 @@ def get_daily_metrics(df):
         'longest_trending_video_title' : longest_trending_video['title'].item(),
         'longest_trending_video_channel' : longest_trending_video['channel_title'].item(),
         'longest_trending_video_duration' : int(longest_trending_video['duration'].item()),
-        'most_popular_creator_channel_id' : df[df['channel_title'] == most_popular_creator]['channel_id'].unique().item(),
+        'most_popular_creator_channel_id' : df[df['channel_title'] == most_popular_creator]['channel_id'].unique()[0],
         'most_popular_creator_channel' : most_popular_creator,
         'most_popular_creator_video_count' : len(df[df['channel_title'] == most_popular_creator]),
     }

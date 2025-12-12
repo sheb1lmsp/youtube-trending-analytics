@@ -101,7 +101,7 @@ top_vids = unique_df.sort_values(metric_col, ascending=False)[
 top_vids["Video URL"] = top_vids['video_id'].apply(lambda x : f"https://www.youtube.com/watch?v={x}")
 top_vids.columns = ['Title', 'Channel', 'Views', 'Likes', 'Comments', 'Engagement Score', 'Video ID', 'Video URL']
 
-st.dataframe(top_vids.drop('Video ID', axis=1).set_index(pd.Series(range(1,11))), use_container_width=True, height=400)
+st.dataframe(top_vids.drop('Video ID', axis=1).set_index(pd.Series(range(1,len(top_vids)+1))), use_container_width=True, height=420)
 
 # ----------------------------------------------------------------------------
 # CATEGORY PERFORMANCE ACROSS COUNTRIES

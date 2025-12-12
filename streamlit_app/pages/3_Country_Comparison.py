@@ -95,7 +95,7 @@ agg.columns = ['Country', 'Total Videos', 'Total Views', 'Total Likes', 'Total C
 st.dataframe(
     agg.set_index(pd.Series(range(1, len(countries) + 1))), 
     use_container_width=True, 
-    height=350
+    height=420
 )
 
 # ----------------------------------------------------------------------------
