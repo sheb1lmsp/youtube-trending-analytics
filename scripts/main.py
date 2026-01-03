@@ -16,14 +16,11 @@ def run():
     - Fetch trending videos for every country
     - Save country-level CSV files
     """
-    today = datetime.datetime.today()
+    today = datetime.datetime.now().strftime('%Y-%m-%d')
+    year = today.split("-")[0]
+    month = today.split("-")[1]
     BASE_DIR = os.path.abspath(".")
-    data_dir = os.path.join(BASE_DIR, "..", "data")
-    year_dir = os.path.join(data_dir, str(today.year))
-
-    # Ensure year directory exists
-    if not os.path.exists(year_dir):
-        os.makedirs(year_dir)
+    DATA_DIR = os.path.join(BASE_DIR, "..", "data")
 
     for country in countries:
         print(f"\nFetching trending videos for {country}...")
@@ -36,14 +33,14 @@ def run():
                 print(f"No trending data for {country}, skipping.")
                 continue
 
-            # Folder for the specific country
-            country_dir = os.path.join(year_dir, country)
-            os.makedirs(country_dir, exist_ok=True)
+            # Folder for the specific country and the date
+            COUNTRY_DIR = os.path.join(DATA_DIR, f"country={country}", f"year={year}", f"month={month}")
+            os.makedirs(COUNTRY_DIR, exist_ok=True)
 
             # Save daily file
             file_path = os.path.join(
-                country_dir,
-                f"trending_{country}_{today.strftime('%Y-%m-%d')}.csv"
+                COUNTRY_DIR,
+                f"trending_{country}_{today}.csv"
             )
 
             df.to_csv(file_path, index=False)

@@ -33,14 +33,13 @@ def get_latest_data():
         pattern = f"{yesterday.strftime('%Y-%m-%d')}"
 
     df = pd.DataFrame()
-    all_data_path_list = list(DATA_DIR.glob('*/*/*.csv'))
+    all_data_path_list = list(DATA_DIR.glob(f"*/*/*/*{pattern}.csv"))
     for data_path in all_data_path_list:
-        if pattern in str(data_path):
-            current_df = pd.read_csv(data_path)
+        current_df = pd.read_csv(data_path)
 
-            current_df['country_name'] = current_df['country'].apply(get_country_name)
+        current_df['country_name'] = current_df['country'].apply(get_country_name)
 
-            df = pd.concat((df, current_df), axis=0)
+        df = pd.concat((df, current_df), axis=0)
 
     df['published_at'] = pd.to_datetime(df['published_at'])
     df['fetched_at'] = pd.to_datetime(df['fetched_at'])

@@ -39,6 +39,7 @@ def get_trending_videos(region):
         snippet = v["snippet"]
         stats = v.get("statistics", {})
         content = v.get("contentDetails", {})
+        status = v.get("status", {})
         cid = snippet.get("categoryId")
 
         rows.append({
@@ -65,10 +66,10 @@ def get_trending_videos(region):
             "duration": duration_to_seconds(content.get("duration")),
             "duration_raw": content.get("duration"),
             "definition": content.get("definition"),
-            "caption_available": content.get("caption"),
-            "licensed_content": content.get("licensedContent"),
-            "embeddable": content.get("embeddable"),
-            "made_for_kids": content.get("madeForKids"),
+            "caption_available": content.get("caption") == "true",
+            "licensed_content": content.get("licensedContent", False),
+            "embeddable": status.get("embeddable", False),
+            "made_for_kids": status.get("madeForKids", False),
 
             # Stats
             "views": int(stats.get("viewCount", 0)),
