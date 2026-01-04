@@ -7,3 +7,4 @@ numpy
 plotly
 wordcloud
 python-dateutil
+kaggle
