@@ -79,7 +79,5 @@ def get_trending_videos(region):
 
 
     df = pd.DataFrame(rows)
-    df['published_at'] = pd.to_datetime(df['published_at'])
-    df['fetched_at'] = pd.to_datetime(df['fetched_at'])
 
     return df

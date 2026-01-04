@@ -34,7 +34,7 @@ def run():
                 continue
 
             # Folder for the specific country and the date
-            COUNTRY_DIR = os.path.join(DATA_DIR, f"country={country}", f"year={year}", f"month={month}")
+            COUNTRY_DIR = os.path.join(DATA_DIR, "videos", f"country={country}", f"year={year}", f"month={month}")
             os.makedirs(COUNTRY_DIR, exist_ok=True)
 
             # Save daily file
