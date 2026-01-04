@@ -47,4 +47,12 @@ jobs:
       env:
         KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
       run: |
+        mkdir -p ~/.kaggle
+        
+        echo "$KAGGLE_API_TOKEN" > ~/.kaggle/access_token
+        echo "{\"username\":\"shebilmsp\",\"key\":\"$KAGGLE_API_TOKEN\"}" > ~/.kaggle/kaggle.json
+        
+        chmod 600 ~/.kaggle/kaggle.json
+        chmod 600 ~/.kaggle/access_token
+        
         kaggle datasets version -p data/ -m "Daily update - $(date '+%Y-%m-%d')" --dir-mode zip
