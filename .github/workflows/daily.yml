@@ -48,5 +48,4 @@ jobs:
         KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
         KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
       run: |
-        echo "{\"username\":\"$KAGGLE_USERNAME\",\"key\":\"$KAGGLE_KEY\"}"
         kaggle datasets version -p data/ -m "Daily update - $(date '+%Y-%m-%d')" --dir-mode zip
