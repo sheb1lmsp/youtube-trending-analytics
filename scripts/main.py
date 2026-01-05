@@ -26,7 +26,7 @@ def run():
     month = today.split("-")[1]
 
     # Robust path handling
-    BASE_DIR = os.path.dirname(os.path.abspath('.'))
+    BASE_DIR = os.path.abspath('.')
     DATA_DIR = os.path.join(BASE_DIR, "..", "data")
 
     # To store unique channel ids found TODAY
